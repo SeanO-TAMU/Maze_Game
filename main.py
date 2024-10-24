@@ -38,8 +38,8 @@ class HWall(Wall):
         self.line2_end_pos = (x+400, y+150)
         self.line_width = 5 #this can be modified/change how it work/may not need to store
         self.line_color = "grey" #may not need to store this
-        self.line1 = pygame.draw.line(SCREEN, "grey", [self.line1_start_pos[0], self.line1_start_pos[1]], [self.line1_end_pos[0], self.line1_end_pos[1]], 5)
-        self.line2 = pygame.draw.line(SCREEN, "grey", [self.line2_start_pos[0], self.line2_start_pos[1]], [self.line2_end_pos[0], self.line2_end_pos[1]], 5)
+        self.line1 = pygame.draw.line(SCREEN, self.line_color, [self.line1_start_pos[0], self.line1_start_pos[1]], [self.line1_end_pos[0], self.line1_end_pos[1]], self.line_width)
+        self.line2 = pygame.draw.line(SCREEN, self.line_color, [self.line2_start_pos[0], self.line2_start_pos[1]], [self.line2_end_pos[0], self.line2_end_pos[1]], self.line_width)
        
 class VWall(Wall):
     def __init__(self, x, y):
@@ -50,9 +50,21 @@ class VWall(Wall):
         self.line2_end_pos = (x+150, y+400)
         self.line_width = 5 #this can be modified/change how it work/may not need to store
         self.line_color = "grey" #may not need to store this
-        self.line1 = pygame.draw.line(SCREEN, "grey", [self.line1_start_pos[0], self.line1_start_pos[1]], [self.line1_end_pos[0], self.line1_end_pos[1]], 5)
-        self.line2 = pygame.draw.line(SCREEN, "grey", [self.line2_start_pos[0], self.line2_start_pos[1]], [self.line2_end_pos[0], self.line2_end_pos[1]], 5)
+        self.line1 = pygame.draw.line(SCREEN, self.line_color, [self.line1_start_pos[0], self.line1_start_pos[1]], [self.line1_end_pos[0], self.line1_end_pos[1]], self.line_width)
+        self.line2 = pygame.draw.line(SCREEN, self.line_color, [self.line2_start_pos[0], self.line2_start_pos[1]], [self.line2_end_pos[0], self.line2_end_pos[1]], self.line_width)
 
+class RDCorner(Wall):
+    def __init__(self, x, y):
+        super().__init__(x, y, 3)
+        self.line1_start_pos = (x,y)
+        self.line1_end_pos = (x+150,y)
+        self.line2_start_pos = (x+150,y)
+        self.line2_end_pos = (x+150, y+150)
+        self.line_width = 5 #this can be modified/change how it work/may not need to store
+        self.line_color = "grey" #may not need to store this
+        self.line1 = pygame.draw.line(SCREEN, self.line_color, [self.line1_start_pos[0], self.line1_start_pos[1]], [self.line1_end_pos[0], self.line1_end_pos[1]], self.line_width)
+        self.line2 = pygame.draw.line(SCREEN, self.line_color, [self.line2_start_pos[0], self.line2_start_pos[1]], [self.line2_end_pos[0], self.line2_end_pos[1]], self.line_width)
+       
 
 class Player:
     def __init__(self, x,y):
@@ -65,14 +77,14 @@ class Player:
     def PlayerCollideWalls(self, walls: List[Wall]):
         returners = []
         for wall in walls:
-            if(wall.type == 1 or wall.type == 2):
-                if wall.line1.colliderect(self.x, self.y - 300*dt, 40, 40) or wall.line2.colliderect(self.x, self.y - 300*dt, 40, 40):
+            if(wall.type == 1 or wall.type == 2 or wall.type == 3):
+                if (wall.line1.colliderect(self.x, self.y - 300*dt, 40, 40) or wall.line2.colliderect(self.x, self.y - 300*dt, 40, 40)):
                     returners.append(1) #return number based off what type of wall collided with
-                elif (wall.line1.colliderect(self.x, self.y + 300*dt, 40, 40) or wall.line2.colliderect(self.x, self.y + 300*dt, 40, 40)):
+                if (wall.line1.colliderect(self.x, self.y + 300*dt, 40, 40) or wall.line2.colliderect(self.x, self.y + 300*dt, 40, 40)):
                     returners.append(2)
-                elif (wall.line1.colliderect(self.x - 300*dt, self.y, 40, 40) or wall.line2.colliderect(self.x - 300*dt, self.y, 40, 40)):
+                if (wall.line1.colliderect(self.x - 300*dt, self.y, 40, 40) or wall.line2.colliderect(self.x - 300*dt, self.y, 40, 40)):
                     returners.append(3)
-                elif (wall.line1.colliderect(self.x + 300*dt, self.y, 40, 40) or wall.line2.colliderect(self.x + 300*dt, self.y, 40, 40)):
+                if (wall.line1.colliderect(self.x + 300*dt, self.y, 40, 40) or wall.line2.colliderect(self.x + 300*dt, self.y, 40, 40)):
                     returners.append(4)
         return returners
 
@@ -96,7 +108,7 @@ class Player:
         keys = pygame.key.get_pressed()
         if (keys[pygame.K_w] and self.y > 0 and moveUp):
             self.y -= 300 * dt
-        if (keys[pygame.K_s] and player_pos.y + 40 < 720 and moveDown):
+        if (keys[pygame.K_s] and self.y + 40 < 720 and moveDown):
             self.y += 300*dt
         if (keys[pygame.K_a] and self.x > 0 and moveLeft):
             self.x -= 300 * dt
@@ -116,7 +128,7 @@ while running:
     SCREEN.fill(screenColor)
 
     # RENDER YOUR GAME HERE
-    walls = [HWall(300, 100), VWall(700, 250)]
+    walls = [HWall(300, 100), VWall(700, 250), RDCorner(700, 100)]
     character.DrawPlayer()
 
     #movement of player

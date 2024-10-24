@@ -14,7 +14,7 @@ clock = pygame.time.Clock();
 running: bool = True;
 dt = 0;
 
-player_pos_x = SCREEN.get_width()/2 - 25 #minus 25 to get in middle
+player_pos_x = SCREEN.get_width()/2 - 300 #minus 25 to get in middle
 player_pos_y = SCREEN.get_height()/2 + 100 #minus 25 to get in middle
 player_pos = pygame.Vector2(player_pos_x, player_pos_y);
 screenColor = (0, 100, 0)
@@ -29,7 +29,7 @@ class Wall: #need a corner piece (for each direction), intersection piece (2 and
         # self.line2 = pygame.draw.line(SCREEN, "grey", [self.x, self.y+150], [self.x+400, self.y+150], 5)
 
 
-class HWall(Wall):
+class HWall(Wall): #type 1
     def __init__(self, x, y):
         super().__init__(x, y, 1)
         self.line1_start_pos = (x,y)
@@ -41,7 +41,7 @@ class HWall(Wall):
         self.line1 = pygame.draw.line(SCREEN, self.line_color, [self.line1_start_pos[0], self.line1_start_pos[1]], [self.line1_end_pos[0], self.line1_end_pos[1]], self.line_width)
         self.line2 = pygame.draw.line(SCREEN, self.line_color, [self.line2_start_pos[0], self.line2_start_pos[1]], [self.line2_end_pos[0], self.line2_end_pos[1]], self.line_width)
        
-class VWall(Wall):
+class VWall(Wall): #type 2
     def __init__(self, x, y):
         super().__init__(x, y, 2)
         self.line1_start_pos = (x,y)
@@ -53,7 +53,7 @@ class VWall(Wall):
         self.line1 = pygame.draw.line(SCREEN, self.line_color, [self.line1_start_pos[0], self.line1_start_pos[1]], [self.line1_end_pos[0], self.line1_end_pos[1]], self.line_width)
         self.line2 = pygame.draw.line(SCREEN, self.line_color, [self.line2_start_pos[0], self.line2_start_pos[1]], [self.line2_end_pos[0], self.line2_end_pos[1]], self.line_width)
 
-class RDCorner(Wall):
+class RDCorner(Wall): #type 3
     def __init__(self, x, y):
         super().__init__(x, y, 3)
         self.line1_start_pos = (x,y)
@@ -64,7 +64,18 @@ class RDCorner(Wall):
         self.line_color = "grey" #may not need to store this
         self.line1 = pygame.draw.line(SCREEN, self.line_color, [self.line1_start_pos[0], self.line1_start_pos[1]], [self.line1_end_pos[0], self.line1_end_pos[1]], self.line_width)
         self.line2 = pygame.draw.line(SCREEN, self.line_color, [self.line2_start_pos[0], self.line2_start_pos[1]], [self.line2_end_pos[0], self.line2_end_pos[1]], self.line_width)
-       
+        
+class DRCorner(Wall): #type 4
+     def __init__(self, x, y):
+        super().__init__(x, y, 4)
+        self.line1_start_pos = (x,y)
+        self.line1_end_pos = (x,y+150)
+        self.line2_start_pos = (x,y+150)
+        self.line2_end_pos = (x+150, y+150)
+        self.line_width = 5 #this can be modified/change how it work/may not need to store
+        self.line_color = "grey" #may not need to store this
+        self.line1 = pygame.draw.line(SCREEN, self.line_color, [self.line1_start_pos[0], self.line1_start_pos[1]], [self.line1_end_pos[0], self.line1_end_pos[1]], self.line_width)
+        self.line2 = pygame.draw.line(SCREEN, self.line_color, [self.line2_start_pos[0], self.line2_start_pos[1]], [self.line2_end_pos[0], self.line2_end_pos[1]], self.line_width)
 
 class Player:
     def __init__(self, x,y):
@@ -77,7 +88,7 @@ class Player:
     def PlayerCollideWalls(self, walls: List[Wall]):
         returners = []
         for wall in walls:
-            if(wall.type == 1 or wall.type == 2 or wall.type == 3):
+            if(wall.type == 1 or wall.type == 2 or wall.type == 3 or wall.type == 4):
                 if (wall.line1.colliderect(self.x, self.y - 300*dt, 40, 40) or wall.line2.colliderect(self.x, self.y - 300*dt, 40, 40)):
                     returners.append(1) #return number based off what type of wall collided with
                 if (wall.line1.colliderect(self.x, self.y + 300*dt, 40, 40) or wall.line2.colliderect(self.x, self.y + 300*dt, 40, 40)):
@@ -128,7 +139,7 @@ while running:
     SCREEN.fill(screenColor)
 
     # RENDER YOUR GAME HERE
-    walls = [HWall(300, 100), VWall(700, 250), RDCorner(700, 100)]
+    walls = [HWall(100, 10), VWall(500, 160), RDCorner(500, 10), DRCorner(500,560), HWall(650, 560)]
     character.DrawPlayer()
 
     #movement of player
